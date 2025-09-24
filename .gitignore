@@ -30,6 +30,7 @@ test.*
 
 /backup_databases/*.json
 /backup_databases/databases/*.sql
+/backup_databases/databases/import_databases.bat
 
 /backup_files/*.json
 

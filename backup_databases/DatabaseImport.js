@@ -91,6 +91,14 @@ class DatabaseImport extends ConfigManager {
       // 執行批次檔
       try {
         execSync(batPath, { stdio: "inherit" });
+        // 更新資料庫內容
+        const queries = [
+          `UPDATE cpc_db.userdata_tab SET ud_password = ud_id;`,
+          `UPDATE cpc_db.projectmanagement_tab SET pm_link = CONCAT('/', pm_id, '/dist');`,
+          `UPDATE cpc_db.projectmanagement_tab SET pm_link = CONCAT('/', pm_id) WHERE pm_id IN ('flange', 'incident');`,
+          `UPDATE cpc_db.projectmanagement_tab SET pm_link = '/store_system' WHERE pm_id = 'store';`,
+        ];
+        await Promise.all(queries.map((q) => connection.execute(q)));
         console.log("✅ 所有資料庫匯入完成");
       } catch (err) {
         console.error("❌ 匯入失敗:", err.message);
