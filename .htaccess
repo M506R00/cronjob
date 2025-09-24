@@ -1,0 +1,18 @@
+RewriteEngine On
+
+# 1. 將 IP 轉換成網域
+# RewriteCond %{HTTP_HOST} ^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$
+RewriteCond %{HTTP_HOST} ^(10\.20\.191\.105)$
+RewriteRule ^(.*)$ http://tlvsvd1vc1.cpc.com.tw/$1 [R=301,L]
+
+# 2. 強制 HTTP 轉 HTTPS
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP_HOST} ^(tlvsvd1vc1\.cpc\.com\.tw)$
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+# 3. 將 /loginpage.php 強制導向 /
+RewriteCond %{THE_REQUEST} /([^/]+)/loginpage\.php [NC]
+RewriteRule ^([^/]+)/loginpage\.php$ /$1 [L,R=301]
+
+# 4. 將 /projectwise 強制導向 /techdata/#/FileUpload
+RedirectMatch 301 ^/projectwise/ /techdata/#/FileUpload
