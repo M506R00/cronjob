@@ -16,10 +16,13 @@ echo "開始轉換所有非系統資料庫...<br />";
 // 系統資料庫清單
 $systemDbs = ["information_schema", "mysql", "performance_schema", "sys"];
 
+$character = 'utf8mb4';
+$collate = $character . '_0900_ai_ci';
+$engine_innodb = 'InnoDB';
+$engine_myisam = 'MyISAM';
+
 // 找出所有資料庫
 $result = $mysqli->query("SHOW DATABASES");
-$character = 'utf8mb4';
-$collate = 'utf8mb4_0900_ai_ci';
 while ($row = $result->fetch_assoc()) {
   $dbName = $row['Database'];
   if (in_array($dbName, $systemDbs)) {
@@ -54,19 +57,19 @@ while ($row = $result->fetch_assoc()) {
     }
 
     // 根據引擎做處理
-    if ($engine === "MYISAM") {
-      $sql = "ALTER TABLE `$tableName` ENGINE=InnoDB";
+    if ($engine === strtoupper($engine_myisam)) {
+      $sql = "ALTER TABLE `$tableName` ENGINE=$engine_innodb";
       if ($mysqli->query($sql)) {
-        echo "  ✔️ 引擎已由 MyISAM 轉為 InnoDB<br />";
+        echo "  ✔️ 引擎已由 $engine_myisam 轉為 $engine_innodb<br />";
       } else {
         echo "  ❌ 引擎轉換失敗: " . $mysqli->error . "<br />";
       }
-    } elseif ($engine === "INNODB") {
-      echo "  ℹ️ 引擎已是 InnoDB，無需轉換<br />";
+    } elseif ($engine === strtoupper($engine_innodb)) {
+      echo "  ℹ️ 引擎已是 $engine_innodb，無需轉換<br />";
     } else {
-      echo "  <span style='color:red'>⚠️ 引擎非 MyISAM/ InnoDB: $engine</span><br />";
+      echo "  <span style='color:red'>⚠️ 引擎非 $engine_myisam/ $engine_innodb: $engine</span><br />";
     }
-  echo '</p>';
+    echo '</p>';
   }
   echo '<hr />';
 }
